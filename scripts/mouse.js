@@ -25,7 +25,6 @@ export class MouseHandler extends EventDispatcher {
         this.dragStartY = 0;
         this.dragEndX = 0;
         this.dragEndY = 0;
-        this.selectedTiles = [];
 
         this.mouseWheel = this.mouseWheel.bind(this);
         this.mousePressed = this.mousePressed.bind(this);
@@ -120,11 +119,15 @@ export class MouseHandler extends EventDispatcher {
         if (this.app.project.mode == "add") {
             this.app.renderer.renderSelection = false;
 
-            this.selectedTiles = itemsOverArea(
+            const selectedTiles = itemsOverArea(
                 this.dragStartX,
                 this.dragStartY,
                 ...this.tile
             );
+
+            for (const [x, y] of selectedTiles) {
+                this.app.project.map[y][x] = "wall";
+            }
         }
 
         if (this.app.project.mode == "pointer") this.app.camera.stopDrag();

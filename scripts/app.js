@@ -13,7 +13,7 @@ export class MapEditor {
         this.mouse = new MouseHandler(this);
         this.ui = new UIHandler(this);
 
-        this.project = new Project();
+        this.project = new Project(this);
 
         this.windowResize = this.windowResize.bind(this);
     }
@@ -30,6 +30,8 @@ export class MapEditor {
         this.camera.setup(ctx);
         this.mouse.setup(ctx);
         this.ui.setup();
+        this.project.load();
+        this.renderer.setup(ctx);
 
         this.camera.setPosition(
             (this.project.size[0] / 2) * this.project.tileSize,
