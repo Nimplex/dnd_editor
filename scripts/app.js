@@ -30,7 +30,6 @@ export class MapEditor {
         this.camera.setup(ctx);
         this.mouse.setup(ctx);
         this.ui.setup();
-        this.project.load();
         this.renderer.setup(ctx);
 
         this.camera.setPosition(
