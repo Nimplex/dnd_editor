@@ -19,7 +19,7 @@ export class MouseHandler extends EventDispatcher {
         super();
 
         this.app = app;
-        this.logger = new Logger("mouse", "#00FFFF");
+        this.logger = new Logger("mouse", "#bdb2ff");
 
         this.dragStartX = 0;
         this.dragStartY = 0;
@@ -33,12 +33,31 @@ export class MouseHandler extends EventDispatcher {
         this.mouseDragged = this.mouseDragged.bind(this);
     }
 
+    get tile() {
+        const { mouseX, mouseY, width, height } = this.ctx;
+        const worldX =
+            (mouseX - width / 2) / this.app.camera.zoom + this.app.camera.x;
+        const worldY =
+            (mouseY - height / 2) / this.app.camera.zoom + this.app.camera.y;
+        return [
+            Math.floor(worldX / this.app.project.tileSize),
+            Math.floor(worldY / this.app.project.tileSize),
+        ];
+    }
+
     setup(ctx) {
         this.ctx = ctx;
         ctx.mouseWheel = this.mouseWheel;
         ctx.mousePressed = this.mousePressed;
         ctx.mouseReleased = this.mouseReleased;
         ctx.mouseDragged = this.mouseDragged;
+        this.logger.info("Mouse handler created");
+    }
+
+    update(ctx) {
+        if (ctx.mouseIsPressed) {
+            [this.dragEndX, this.dragEndY] = this.tile;
+        }
     }
 
     mouseWheel(event) {
@@ -51,39 +70,22 @@ export class MouseHandler extends EventDispatcher {
     }
 
     mousePressed() {
-        this.logger.verbose(
-            `mouse button pressed: ${this.ctx.mouseButton}`
-        );
+        this.logger.verbose(`mouse button pressed: ${this.ctx.mouseButton}`);
         if (this.ctx.mouseButton == this.ctx.LEFT) this.leftPressed();
         if (this.ctx.mouseButton == this.ctx.RIGHT) this.rightPressed();
-        if (this.ctx.mouseButton == this.ctx.CENTER)
-            this.wheelPressed();
+        if (this.ctx.mouseButton == this.ctx.CENTER) this.wheelPressed();
     }
 
     mouseReleased() {
-        this.logger.verbose(
-            `mouse button released: ${this.ctx.mouseButton}`
-        );
+        this.logger.verbose(`mouse button released: ${this.ctx.mouseButton}`);
         if (this.ctx.mouseButton == this.ctx.LEFT) this.leftReleased();
-        if (this.ctx.mouseButton == this.ctx.RIGHT)
-            this.rightReleased();
-        if (this.ctx.mouseButton == this.ctx.CENTER)
-            this.wheelReleased();
+        if (this.ctx.mouseButton == this.ctx.RIGHT) this.rightReleased();
+        if (this.ctx.mouseButton == this.ctx.CENTER) this.wheelReleased();
     }
 
     mouseDragged() {
-        if (this.app.currentMode == "add") {
-            const worldX =
-                (this.ctx.mouseX - this.ctx.width / 2) /
-                    this.app.camera.zoom +
-                this.app.camera.x;
-            const worldY =
-                (this.ctx.mouseY - this.ctx.height / 2) /
-                    this.app.camera.zoom +
-                this.app.camera.y;
-            const tileX = Math.floor(worldX / this.app.tileSize);
-            const tileY = Math.floor(worldY / this.app.tileSize);
-            [this.dragEndX, this.dragEndY] = [tileX, tileY];
+        if (this.app.project.mode == "add") {
+            [this.dragEndX, this.dragEndY] = [this.tile[0], this.tile[1]];
         }
 
         this.app.camera.drag(this.ctx.mouseX, this.ctx.mouseY);
@@ -92,26 +94,17 @@ export class MouseHandler extends EventDispatcher {
     // -------------------------------------------------------------------------
 
     leftPressed() {
-        const worldX =
-            (this.ctx.mouseX - this.ctx.width / 2) /
-                this.app.camera.zoom +
-            this.app.camera.x;
-        const worldY =
-            (this.ctx.mouseY - this.ctx.height / 2) /
-                this.app.camera.zoom +
-            this.app.camera.y;
-        const tileX = Math.floor(worldX / this.app.tileSize);
-        const tileY = Math.floor(worldY / this.app.tileSize);
+        if (this.tile[0] < 0 || this.tile[0] >= this.app.project.size[0])
+            return;
+        if (this.tile[1] < 0 || this.tile[1] >= this.app.project.size[1])
+            return;
 
-        if (tileX < 0 || tileX >= this.app.mapSize[0]) return;
-        if (tileY < 0 || tileY >= this.app.mapSize[1]) return;
-
-        if (this.app.currentMode == "add") {
-            [this.dragStartX, this.dragStartY] = [tileX, tileY];
+        if (this.app.project.mode == "add") {
+            [this.dragStartX, this.dragStartY] = [this.tile[0], this.tile[1]];
             this.app.renderer.renderSelection = true;
         }
 
-        if (this.app.currentMode == "pointer")
+        if (this.app.project.mode == "pointer")
             this.app.camera.startDrag(this.ctx.mouseX, this.ctx.mouseY);
     }
 
@@ -124,31 +117,17 @@ export class MouseHandler extends EventDispatcher {
     // -------------------------------------------------------------------------
 
     leftReleased() {
-        if (this.app.currentMode == "add") {
-            const worldX =
-                (this.ctx.mouseX - this.ctx.width / 2) /
-                    this.app.camera.zoom +
-                this.app.camera.x;
-            const worldY =
-                (this.ctx.mouseY - this.ctx.height / 2) /
-                    this.app.camera.zoom +
-                this.app.camera.y;
-            const tileX = Math.floor(worldX / this.app.tileSize);
-            const tileY = Math.floor(worldY / this.app.tileSize);
-
-            [this.dragEndX, this.dragEndY] = [tileX, tileY];
-
-            // renderSelection = false;
+        if (this.app.project.mode == "add") {
+            this.app.renderer.renderSelection = false;
 
             this.selectedTiles = itemsOverArea(
                 this.dragStartX,
                 this.dragStartY,
-                tileX,
-                tileY
+                ...this.tile
             );
         }
 
-        if (this.app.currentMode == "pointer") this.app.camera.stopDrag();
+        if (this.app.project.mode == "pointer") this.app.camera.stopDrag();
     }
 
     wheelReleased() {

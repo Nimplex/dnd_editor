@@ -1,33 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="libraries/p5.min.js"></script>
-    <script src="libraries/p5.sound.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div id="ui-wrapper">
-        <div id="bottom-bar">
-            <div id="left-container"><p id="left-container-text"></p></div>
-            <div id="center-container">
-                <img src="assets/hand-pointer.svg" alt="cursor" data-mode="pointer" class="active mode-icon">
-                <img src="assets/add-cursor.svg" alt="cursor" data-mode="add" class="mode-icon">
-                <img src="assets/text-cursor.svg" alt="cursor" data-mode="text" class="mode-icon">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="libraries/p5.min.js"></script>
+        <script src="libraries/p5.sound.min.js"></script>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div id="ui-wrapper">
+            <div id="bottom-bar">
+                <div id="left-container"><p id="left-container-text"></p></div>
+                <div id="center-container">
+                    <img
+                        src="assets/hand-pointer.svg"
+                        alt="cursor"
+                        class="active mode-icon"
+                        data-mode="pointer"
+                    />
+                    <img
+                        src="assets/add-cursor.svg"
+                        alt="cursor"
+                        class="mode-icon"
+                        data-mode="add"
+                    />
+                    <img
+                        src="assets/text-cursor.svg"
+                        alt="cursor"
+                        class="mode-icon"
+                        data-mode="text"
+                    />
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- <script src="scripts/renderer.js"></script> -->
-    <!-- <script src="scripts/mouse.js"></script> -->
-    <!-- <script src="scripts/ui.js"></script> -->
-    <!-- <script src="scripts/camera.js"></script> -->
-    <script type="module" src="index.js"></script>
-    <!-- <script src="scripts/index.js"></script> -->
-</body>
+        <!-- <script src="scripts/renderer.js"></script> -->
+        <!-- <script src="scripts/mouse.js"></script> -->
+        <!-- <script src="scripts/ui.js"></script> -->
+        <!-- <script src="scripts/camera.js"></script> -->
+        <script type="module" src="index.js"></script>
+        <!-- <script src="scripts/index.js"></script> -->
+    </body>
 </html>

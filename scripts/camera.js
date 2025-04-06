@@ -1,12 +1,13 @@
+import { Logger } from "./console.js";
+
 export class Camera2D {
     constructor(app) {
         this.app = app;
-
+        this.logger = new Logger("camera", "#caffbf");
+        this.dragging = false;
         this.x = 0;
         this.y = 0;
         this.zoom = 1;
-        this.dragging = false;
-
         this.startMouseX = 0;
         this.startMouseY = 0;
         this.startCamX = 0;
@@ -15,13 +16,15 @@ export class Camera2D {
 
     setup(ctx) {
         this.ctx = ctx;
+        this.logger.info("Camera created");
     }
 
     apply() {
-        this.ctx.translate(-this.ctx.width / 2, -this.ctx.height / 2);
-        this.ctx.translate(this.ctx.width / 2, this.ctx.height / 2);
-        this.ctx.scale(this.zoom);
-        this.ctx.translate(-this.x, -this.y);
+        const { ctx, zoom, x, y } = this;
+        ctx.translate(-ctx.width / 2, -ctx.height / 2);
+        ctx.translate(ctx.width / 2, ctx.height / 2);
+        ctx.scale(zoom);
+        ctx.translate(-x, -y);
     }
 
     move(dx, dy) {
@@ -30,25 +33,25 @@ export class Camera2D {
     }
 
     setPosition(px, py) {
-        this.x = px;
-        this.y = py;
+        [this.x, this.y] = [px, py];
     }
 
     zoomAt(px, py, factor) {
-        const wx = (px - this.ctx.width / 2) / this.zoom + this.x;
-        const wy = (py - this.ctx.height / 2) / this.zoom + this.y;
+        const { width, height } = this.ctx;
+        const wx = (px - width / 2) / this.zoom + this.x;
+        const wy = (py - height / 2) / this.zoom + this.y;
 
         this.zoom *= factor;
-        this.x = wx - (px - this.ctx.width / 2) / this.zoom;
-        this.y = wy - (py - this.ctx.height / 2) / this.zoom;
+        this.x = wx - (px - width / 2) / this.zoom;
+        this.y = wy - (py - height / 2) / this.zoom;
     }
 
     startDrag(mx, my) {
+        const { width, height } = this.ctx;
+
         this.dragging = true;
-
-        this.startMouseX = mx / this.zoom + this.x - this.ctx.width / 2 / this.zoom;
-        this.startMouseY = my / this.zoom + this.y - this.ctx.height / 2 / this.zoom;
-
+        this.startMouseX = mx / this.zoom + this.x - width / 2 / this.zoom;
+        this.startMouseY = my / this.zoom + this.y - height / 2 / this.zoom;
         this.startCamX = this.x;
         this.startCamY = this.y;
     }

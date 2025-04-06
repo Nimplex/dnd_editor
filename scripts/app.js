@@ -1,50 +1,45 @@
 import { Camera2D } from "./camera.js";
 import { Logger } from "./console.js";
 import { MouseHandler } from "./mouse.js";
+import { Project } from "./project.js";
 import { Renderer } from "./renderer.js";
 import { UIHandler } from "./ui.js";
 
 export class MapEditor {
     constructor() {
-        this.logger = new Logger("app", "#660066");
+        this.logger = new Logger("app", "#a0c4ff");
+        this.renderer = new Renderer(this);
         this.camera = new Camera2D(this);
         this.mouse = new MouseHandler(this);
-        this.renderer = new Renderer(this);
         this.ui = new UIHandler(this);
 
-        this.currentMode = "pointer";
-        this.tileSize = 70;
-        this.mapSize = [100, 100];
+        this.project = new Project();
 
         this.windowResize = this.windowResize.bind(this);
     }
 
     setup(ctx) {
         this.ctx = ctx;
+        this.ctx.windowResized = this.windowResize;
 
         this.logger.log("Map editor starting");
         this.logger.verbose("Creating WEBGL canvas");
 
-        this.ctx.createCanvas(
-            ctx.windowWidth,
-            ctx.windowHeight,
-            ctx.WEBGL
-        );
+        this.ctx.createCanvas(ctx.windowWidth, ctx.windowHeight, ctx.WEBGL);
 
-        this.ui.setup();
         this.camera.setup(ctx);
         this.mouse.setup(ctx);
-
-        this.ctx.windowResized = this.windowResize;
+        this.ui.setup();
 
         this.camera.setPosition(
-            (this.mapSize[0] / 2) * this.tileSize,
-            (this.mapSize[1] / 2) * this.tileSize
+            (this.project.size[0] / 2) * this.project.tileSize,
+            (this.project.size[1] / 2) * this.project.tileSize
         );
     }
 
     update() {
         this.renderer.draw(this.ctx);
+        this.mouse.update(this.ctx);
         this.ui.update(this.ctx);
     }
 

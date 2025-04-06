@@ -1,6 +1,9 @@
+import { Logger } from "./console.js";
+
 export class UIHandler {
     constructor(app) {
         this.app = app;
+        this.logger = new Logger("ui", "#ffd6a5");
 
         this.setActiveMode = this.setActiveMode.bind(this);
     }
@@ -10,26 +13,27 @@ export class UIHandler {
             .querySelectorAll(".mode-icon")
             .forEach((icon) => icon.classList.remove("active"));
 
-        this.app.currentMode = target.dataset.mode;
+        this.app.project.mode = target.dataset.mode;
         target.classList.add("active");
     }
 
     setup() {
+        this.logger.info("UI handler created");
+
         this.leftContainerText = document.getElementById("left-container-text");
 
         document
             .querySelectorAll(".mode-icon")
-            .forEach((icon) => icon.addEventListener("click", this.setActiveMode));
+            .forEach((icon) =>
+                icon.addEventListener("click", this.setActiveMode)
+            );
     }
 
-    update(ctx) {
+    update() {
         if (!this.leftContainerText)
             return console.warn("leftContainerText doesn't exist");
 
-        const worldX = (ctx.mouseX - ctx.width / 2) / this.app.camera.zoom + this.app.camera.x;
-        const worldY = (ctx.mouseY - ctx.height / 2) / this.app.camera.zoom + this.app.camera.y;
-        const tileX = Math.floor(worldX / this.app.tileSize);
-        const tileY = Math.floor(worldY / this.app.tileSize);
+        const [tileX, tileY] = this.app.mouse.tile;
 
         this.leftContainerText.innerHTML = `x = ${tileX} <span style="margin: 0 6px; color:rgb(83, 83, 83)">|</span> y = ${tileY}`;
     }

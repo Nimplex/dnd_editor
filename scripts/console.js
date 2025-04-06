@@ -12,18 +12,20 @@ export class Logger {
         const time = this.getTime();
 
         const styleMap = {
-            info: "color: blue; font-weight: normal;",
-            warn: "color: orange; font-weight: bold;",
-            error: "color: red; font-weight: bold;",
-            verbose: "color: gray; font-style: italic;",
+            info: "color: #a0c4ff; font-weight: normal;",
+            warn: "color: #fdffb6; font-weight: bold;",
+            error: "color: #ffadad; font-weight: bold;",
+            verbose: "color: #ffc6ff; font-style: italic;",
         };
 
         const tagStyle = styleMap[level] || "color: black;";
 
         console.log(
-            `[${time}] %c[${this.tag}] %c[${level.toUpperCase()}]%c: ${message}`,
-            this.tagColor,
+            `[${time}] %c[${level
+                .toUpperCase()
+                .padEnd(8)}] %c[${this.tag.padEnd(10)}]%c: ${message}`,
             tagStyle,
+            this.tagColor,
             ""
         );
     }
