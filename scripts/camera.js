@@ -30,10 +30,14 @@ export class Camera2D {
     move(dx, dy) {
         this.x += dx;
         this.y += dy;
+
+        this.app.renderer.reset();
     }
 
     setPosition(px, py) {
         [this.x, this.y] = [px, py];
+
+        this.app.renderer.reset();
     }
 
     zoomAt(px, py, factor) {
@@ -44,6 +48,8 @@ export class Camera2D {
         this.zoom *= factor;
         this.x = wx - (px - width / 2) / this.zoom;
         this.y = wy - (py - height / 2) / this.zoom;
+
+        this.app.renderer.reset();
     }
 
     startDrag(mx, my) {
@@ -54,10 +60,14 @@ export class Camera2D {
         this.startMouseY = my / this.zoom + this.y - height / 2 / this.zoom;
         this.startCamX = this.x;
         this.startCamY = this.y;
+
+        this.app.renderer.reset();
     }
 
     stopDrag() {
         this.dragging = false;
+
+        this.app.renderer.reset();
     }
 
     drag(mx, my) {
@@ -70,5 +80,7 @@ export class Camera2D {
 
         this.x = this.startMouseX - worldMouseX + this.startCamX;
         this.y = this.startMouseY - worldMouseY + this.startCamY;
+
+        this.app.renderer.reset();
     }
 }

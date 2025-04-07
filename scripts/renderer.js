@@ -10,17 +10,24 @@ export class Renderer {
     setup(ctx) {
         this.ctx = ctx;
         this.wallTexture = ctx.loadImage("assets/wall.png");
-    }
 
-    draw(ctx) {
         ctx.background(10, 10, 10);
         ctx.stroke(30, 30, 30);
         ctx.strokeWeight(1);
         ctx.fill("red");
 
-        const { map, size, tileSize } = this.app.project;
+        this.drawGrid(ctx);
+    }
 
-        this.app.camera.apply();
+    reset(ctx = this.ctx) {
+        ctx.clear();
+        ctx.background(10, 10, 10);
+        this.drawGrid();
+        this.draw();
+    }
+
+    drawGrid(ctx = this.ctx) {
+        const { size, tileSize } = this.app.project;
 
         // Grid cols
         for (let x = 0; x <= size[0]; x++) {
@@ -31,6 +38,12 @@ export class Renderer {
         for (let y = 0; y <= size[1]; y++) {
             ctx.line(0, y * tileSize, size[0] * tileSize, y * tileSize);
         }
+    }
+
+    draw(ctx = this.ctx) {
+        const { map, tileSize } = this.app.project;
+
+        this.app.camera.apply();
 
         for (const [y, row] of Object.entries(map)) {
             for (const [x, col] of Object.entries(row)) {
