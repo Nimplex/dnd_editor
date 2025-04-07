@@ -22,8 +22,7 @@ export class Project {
     }
 
     save() {
-        let payload = "";
-        payload += `${btoa(JSON.stringify(this.map))};${this.size[0]};${
+        const payload = `${btoa(JSON.stringify(this.map))};${this.size[0]};${
             this.size[1]
         };${this.tileSize}`;
     }
